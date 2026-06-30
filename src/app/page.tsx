@@ -6,31 +6,31 @@ import Link from "next/link";
 import { Heart, Bookmark, Search } from "lucide-react";
 import { AppProvider, useApp } from "@/context/AppContext";
 import BottomNav from "@/components/BottomNav";
-import { FILM_COLORS, FilmSimulation } from "@/lib/data";
+import { FILM_COLORS, SENSOR_COLORS, FilmSimulation, SensorGen } from "@/lib/data";
 
-const FILTERS: (FilmSimulation | "All")[] = [
-  "All",
-  "Classic Chrome",
-  "Classic Neg",
-  "Nostalgic Neg",
-  "Velvia",
-  "Acros",
-  "Eterna",
+const FILM_FILTERS: (FilmSimulation | "All")[] = [
+  "All", "Classic Chrome", "Classic Neg", "Nostalgic Neg", "Velvia", "Acros", "Eterna",
+];
+
+const SENSOR_FILTERS: (SensorGen | "All")[] = [
+  "All", "X-Trans V", "X-Trans IV", "X-Trans III", "GFX",
 ];
 
 function DiscoverFeed() {
   const { recipes, toggleLike, toggleSave } = useApp();
-  const [filter, setFilter] = useState<FilmSimulation | "All">("All");
+  const [filmFilter, setFilmFilter] = useState<FilmSimulation | "All">("All");
+  const [sensorFilter, setSensorFilter] = useState<SensorGen | "All">("All");
   const [search, setSearch] = useState("");
 
   const filtered = recipes.filter((r) => {
-    const matchFilm = filter === "All" || r.filmSimulation === filter;
+    const matchFilm = filmFilter === "All" || r.filmSimulation === filmFilter;
+    const matchSensor = sensorFilter === "All" || r.sensorGen === sensorFilter;
     const matchSearch =
       !search ||
       r.name.toLowerCase().includes(search.toLowerCase()) ||
       r.author.username.toLowerCase().includes(search.toLowerCase()) ||
       r.tags.some((t) => t.includes(search.toLowerCase()));
-    return matchFilm && matchSearch;
+    return matchFilm && matchSensor && matchSearch;
   });
 
   return (
@@ -73,24 +73,44 @@ function DiscoverFeed() {
           />
         </div>
 
-        <div
-          className="flex gap-2 overflow-x-auto pb-1"
-          style={{ scrollbarWidth: "none" }}
-        >
-          {FILTERS.map((f) => (
+        {/* Film simulation filter */}
+        <div className="flex gap-2 overflow-x-auto pb-1.5" style={{ scrollbarWidth: "none" }}>
+          {FILM_FILTERS.map((f) => (
             <button
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => setFilmFilter(f)}
               className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full transition-all"
               style={{
-                background: filter === f ? "#e8d5b7" : "#1e1e1e",
-                color: filter === f ? "#0a0a0a" : "#6b6b6b",
-                border: filter === f ? "none" : "1px solid #2a2a2a",
+                background: filmFilter === f ? "#e8d5b7" : "#1e1e1e",
+                color: filmFilter === f ? "#0a0a0a" : "#6b6b6b",
+                border: filmFilter === f ? "none" : "1px solid #2a2a2a",
               }}
             >
               {f === "All" ? "Todos" : f}
             </button>
           ))}
+        </div>
+
+        {/* Sensor filter — FREE, sin paywall */}
+        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+          {SENSOR_FILTERS.map((s) => {
+            const active = sensorFilter === s;
+            const color = s !== "All" ? SENSOR_COLORS[s] : undefined;
+            return (
+              <button
+                key={s}
+                onClick={() => setSensorFilter(s)}
+                className="shrink-0 text-xs font-semibold px-3 py-1 rounded-full transition-all flex items-center gap-1"
+                style={{
+                  background: active ? (color ?? "#e8d5b7") : "#141414",
+                  color: active ? "#fff" : "#6b6b6b",
+                  border: `1px solid ${active ? (color ?? "#e8d5b7") : "#2a2a2a"}`,
+                }}
+              >
+                {s === "All" ? "Sensor: Todos" : s}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -118,23 +138,23 @@ function DiscoverFeed() {
                       "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)",
                   }}
                 />
-                <div className="absolute top-2 left-2">
+                <div className="absolute top-2 left-2 flex flex-col gap-1">
                   <span
                     className="text-[9px] font-bold tracking-widest uppercase px-1.5 py-0.5 rounded"
-                    style={{
-                      background: FILM_COLORS[recipe.filmSimulation],
-                      color: "#fff",
-                    }}
+                    style={{ background: FILM_COLORS[recipe.filmSimulation], color: "#fff" }}
                   >
                     {recipe.filmSimulation.split("/")[0]}
+                  </span>
+                  <span
+                    className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                    style={{ background: SENSOR_COLORS[recipe.sensorGen], color: "#fff" }}
+                  >
+                    {recipe.sensorGen}
                   </span>
                 </div>
               </div>
               <div className="px-3 pt-2">
-                <p
-                  className="font-semibold text-sm truncate"
-                  style={{ color: "#f5f5f5" }}
-                >
+                <p className="font-semibold text-sm truncate" style={{ color: "#f5f5f5" }}>
                   {recipe.name}
                 </p>
                 <p className="text-xs mt-0.5" style={{ color: "#6b6b6b" }}>

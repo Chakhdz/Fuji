@@ -9,10 +9,15 @@ export type FilmSimulation =
   | "Nostalgic Neg"
   | "Reala Ace";
 
+export type SensorGen = "X-Trans V" | "X-Trans IV" | "X-Trans III" | "GFX";
+export type RecipeCategory = "Landscape" | "Portrait" | "Street" | "Cinematic" | "Vintage";
+
 export interface Recipe {
   id: string;
   name: string;
   filmSimulation: FilmSimulation;
+  sensorGen: SensorGen;
+  category: RecipeCategory;
   author: {
     id: string;
     username: string;
@@ -39,6 +44,7 @@ export interface Recipe {
   saves: number;
   camera: string;
   createdAt: string;
+  isPublic?: boolean;
   liked?: boolean;
   saved?: boolean;
 }
@@ -86,11 +92,28 @@ const UNSPLASH_PHOTOS = [
   "https://images.unsplash.com/photo-1439853949212-36089e252d48?w=800&q=80",
 ];
 
+export const SENSOR_COLORS: Record<SensorGen, string> = {
+  "X-Trans V": "#5B8A9E",
+  "X-Trans IV": "#7B9E5B",
+  "X-Trans III": "#9E7B5B",
+  GFX: "#9E5B7B",
+};
+
+export const CATEGORY_ICONS: Record<RecipeCategory, string> = {
+  Landscape: "🏔",
+  Portrait: "👤",
+  Street: "🏙",
+  Cinematic: "🎬",
+  Vintage: "📷",
+};
+
 export const MOCK_RECIPES: Recipe[] = [
   {
     id: "1",
     name: "Golden Hour Melt",
     filmSimulation: "Classic Chrome",
+    sensorGen: "X-Trans V",
+    category: "Landscape",
     author: { id: "u1", username: "kaori_shoots", avatar: "https://i.pravatar.cc/150?img=1" },
     photos: [UNSPLASH_PHOTOS[0], UNSPLASH_PHOTOS[8], UNSPLASH_PHOTOS[12]],
     settings: {
@@ -101,12 +124,15 @@ export const MOCK_RECIPES: Recipe[] = [
       iso: "Auto up to 3200", exposureComp: "+1/3",
     },
     tags: ["landscape", "golden hour", "warm", "moody"],
-    likes: 1247, saves: 389, camera: "X-T5", createdAt: "2024-03-15", liked: false, saved: false,
+    likes: 1247, saves: 389, camera: "X-T5", createdAt: "2024-03-15",
+    isPublic: true, liked: false, saved: false,
   },
   {
     id: "2",
     name: "Tokyo Drift",
     filmSimulation: "Classic Neg",
+    sensorGen: "X-Trans IV",
+    category: "Street",
     author: { id: "u2", username: "marco.frame", avatar: "https://i.pravatar.cc/150?img=3" },
     photos: [UNSPLASH_PHOTOS[5], UNSPLASH_PHOTOS[13], UNSPLASH_PHOTOS[1]],
     settings: {
@@ -117,12 +143,15 @@ export const MOCK_RECIPES: Recipe[] = [
       iso: "Auto up to 6400", exposureComp: "0",
     },
     tags: ["street", "urban", "gritty", "contrast"],
-    likes: 892, saves: 241, camera: "X-Pro3", createdAt: "2024-03-10", liked: true, saved: false,
+    likes: 892, saves: 241, camera: "X-Pro3", createdAt: "2024-03-10",
+    isPublic: true, liked: true, saved: false,
   },
   {
     id: "3",
     name: "Summer Haze",
     filmSimulation: "Nostalgic Neg",
+    sensorGen: "X-Trans IV",
+    category: "Portrait",
     author: { id: "u3", username: "lena.vis", avatar: "https://i.pravatar.cc/150?img=5" },
     photos: [UNSPLASH_PHOTOS[6], UNSPLASH_PHOTOS[9], UNSPLASH_PHOTOS[3]],
     settings: {
@@ -133,12 +162,15 @@ export const MOCK_RECIPES: Recipe[] = [
       iso: "Auto up to 1600", exposureComp: "+2/3",
     },
     tags: ["portrait", "summer", "vintage", "film"],
-    likes: 2103, saves: 756, camera: "X-T4", createdAt: "2024-03-08", liked: false, saved: true,
+    likes: 2103, saves: 756, camera: "X-T4", createdAt: "2024-03-08",
+    isPublic: true, liked: false, saved: true,
   },
   {
     id: "4",
     name: "Midnight Acros",
     filmSimulation: "Acros",
+    sensorGen: "X-Trans III",
+    category: "Street",
     author: { id: "u4", username: "noir.lens", avatar: "https://i.pravatar.cc/150?img=7" },
     photos: [UNSPLASH_PHOTOS[11], UNSPLASH_PHOTOS[4], UNSPLASH_PHOTOS[15]],
     settings: {
@@ -149,12 +181,15 @@ export const MOCK_RECIPES: Recipe[] = [
       iso: "ISO 6400", exposureComp: "-1/3",
     },
     tags: ["bw", "night", "street", "dramatic"],
-    likes: 678, saves: 312, camera: "X100V", createdAt: "2024-03-05", liked: false, saved: false,
+    likes: 678, saves: 312, camera: "X100V", createdAt: "2024-03-05",
+    isPublic: true, liked: false, saved: false,
   },
   {
     id: "5",
     name: "Velvia Landscape",
     filmSimulation: "Velvia",
+    sensorGen: "GFX",
+    category: "Landscape",
     author: { id: "u5", username: "peak.chaser", avatar: "https://i.pravatar.cc/150?img=9" },
     photos: [UNSPLASH_PHOTOS[2], UNSPLASH_PHOTOS[10], UNSPLASH_PHOTOS[14]],
     settings: {
@@ -165,12 +200,15 @@ export const MOCK_RECIPES: Recipe[] = [
       iso: "Auto up to 800", exposureComp: "-1/3",
     },
     tags: ["landscape", "nature", "vibrant", "mountains"],
-    likes: 3412, saves: 1089, camera: "GFX50S II", createdAt: "2024-02-28", liked: true, saved: true,
+    likes: 3412, saves: 1089, camera: "GFX50S II", createdAt: "2024-02-28",
+    isPublic: true, liked: true, saved: true,
   },
   {
     id: "6",
     name: "Cinematic Eterna",
     filmSimulation: "Eterna",
+    sensorGen: "X-Trans V",
+    category: "Cinematic",
     author: { id: "u6", username: "cine.frame", avatar: "https://i.pravatar.cc/150?img=11" },
     photos: [UNSPLASH_PHOTOS[7], UNSPLASH_PHOTOS[1], UNSPLASH_PHOTOS[5]],
     settings: {
@@ -181,7 +219,8 @@ export const MOCK_RECIPES: Recipe[] = [
       iso: "Auto up to 3200", exposureComp: "0",
     },
     tags: ["cinematic", "moody", "portrait", "film"],
-    likes: 1567, saves: 498, camera: "X-H2S", createdAt: "2024-02-20", liked: false, saved: false,
+    likes: 1567, saves: 498, camera: "X-H2S", createdAt: "2024-02-20",
+    isPublic: true, liked: false, saved: false,
   },
 ];
 

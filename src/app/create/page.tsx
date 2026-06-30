@@ -6,7 +6,7 @@ import { ArrowLeft, Plus, Camera } from "lucide-react";
 import Link from "next/link";
 import { AppProvider, useApp } from "@/context/AppContext";
 import BottomNav from "@/components/BottomNav";
-import { FilmSimulation, FILM_COLORS, Recipe } from "@/lib/data";
+import { FilmSimulation, FILM_COLORS, Recipe, SensorGen, RecipeCategory } from "@/lib/data";
 
 const SIMULATIONS: FilmSimulation[] = [
   "Classic Chrome",
@@ -74,6 +74,9 @@ function CreateForm() {
   const [noiseReduction, setNoiseReduction] = useState(-2);
   const [grain, setGrain] = useState<"Off" | "Weak" | "Strong">("Off");
   const [colorChrome, setColorChrome] = useState<"Off" | "Weak" | "Strong">("Off");
+  const [sensorGen, setSensorGen] = useState<SensorGen>("X-Trans V");
+  const [category, setCategory] = useState<RecipeCategory>("Landscape");
+  const [isPublic, setIsPublic] = useState(true);
   const [step, setStep] = useState<"info" | "settings" | "preview">("info");
 
   const handleSubmit = () => {
@@ -81,6 +84,9 @@ function CreateForm() {
       id: `new-${Date.now()}`,
       name: name || "Mi Receta",
       filmSimulation: film,
+      sensorGen,
+      category,
+      isPublic,
       author: {
         id: "me",
         username: "tu_usuario",
@@ -239,6 +245,50 @@ function CreateForm() {
 
               <div>
                 <label className="text-xs font-semibold tracking-widest uppercase mb-2 block" style={{ color: "#6b6b6b" }}>
+                  Sensor
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {(["X-Trans V", "X-Trans IV", "X-Trans III", "GFX"] as SensorGen[]).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setSensorGen(s)}
+                      className="text-xs px-3 py-1.5 rounded-full"
+                      style={{
+                        background: sensorGen === s ? "#e8d5b7" : "#141414",
+                        color: sensorGen === s ? "#0a0a0a" : "#6b6b6b",
+                        border: `1px solid ${sensorGen === s ? "#e8d5b7" : "#2a2a2a"}`,
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold tracking-widest uppercase mb-2 block" style={{ color: "#6b6b6b" }}>
+                  Categoría
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {(["Landscape", "Portrait", "Street", "Cinematic", "Vintage"] as RecipeCategory[]).map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setCategory(c)}
+                      className="text-xs px-3 py-1.5 rounded-full"
+                      style={{
+                        background: category === c ? "#e8d5b7" : "#141414",
+                        color: category === c ? "#0a0a0a" : "#6b6b6b",
+                        border: `1px solid ${category === c ? "#e8d5b7" : "#2a2a2a"}`,
+                      }}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold tracking-widest uppercase mb-2 block" style={{ color: "#6b6b6b" }}>
                   Tags (separados por coma)
                 </label>
                 <input
@@ -248,6 +298,34 @@ function CreateForm() {
                   className="w-full px-4 py-3 rounded-xl text-sm outline-none"
                   style={{ background: "#141414", color: "#f5f5f5", border: "1px solid #2a2a2a" }}
                 />
+              </div>
+
+              {/* Community toggle */}
+              <div
+                className="flex items-center justify-between px-4 py-3 rounded-xl"
+                style={{ background: "#141414", border: "1px solid #2a2a2a" }}
+              >
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: "#f5f5f5" }}>
+                    Compartir con la comunidad
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: "#6b6b6b" }}>
+                    Tu receta aparecerá en el feed público
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsPublic(!isPublic)}
+                  className="w-12 h-6 rounded-full transition-all relative"
+                  style={{ background: isPublic ? "#e8d5b7" : "#2a2a2a" }}
+                >
+                  <span
+                    className="absolute top-1 w-4 h-4 rounded-full transition-all"
+                    style={{
+                      background: "#fff",
+                      left: isPublic ? "calc(100% - 20px)" : "4px",
+                    }}
+                  />
+                </button>
               </div>
             </div>
 

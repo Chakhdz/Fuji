@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Heart, Bookmark, Camera, Share2 } from "lucide-react";
 import { AppProvider, useApp } from "@/context/AppContext";
 import BottomNav from "@/components/BottomNav";
-import { FILM_COLORS } from "@/lib/data";
+import { FILM_COLORS, SENSOR_COLORS, CATEGORY_ICONS } from "@/lib/data";
 
 function SettingRow({ label, value }: { label: string; value: string | number }) {
   const isNumber = typeof value === "number";
@@ -75,30 +75,50 @@ function RecipeDetail({ id }: { id: string }) {
           <ArrowLeft size={18} color="#fff" />
         </Link>
 
-        {/* Film badge */}
-        <div className="absolute top-14 right-4">
+        {/* Badges top-right */}
+        <div className="absolute top-14 right-4 flex flex-col items-end gap-1">
           <span
             className="text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded"
             style={{ background: filmColor, color: "#fff" }}
           >
             {recipe.filmSimulation}
           </span>
+          <span
+            className="text-[10px] font-bold px-2 py-1 rounded"
+            style={{ background: SENSOR_COLORS[recipe.sensorGen], color: "#fff" }}
+          >
+            {recipe.sensorGen}
+          </span>
+          <span
+            className="text-[10px] font-bold px-2 py-1 rounded"
+            style={{ background: "rgba(0,0,0,0.5)", color: "#e8d5b7", backdropFilter: "blur(4px)" }}
+          >
+            {CATEGORY_ICONS[recipe.category]} {recipe.category}
+          </span>
         </div>
 
-        {/* Photo dots */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {recipe.photos.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPhotoIdx(i)}
-              className="rounded-full transition-all"
-              style={{
-                width: i === photoIdx ? 20 : 6,
-                height: 6,
-                background: i === photoIdx ? "#e8d5b7" : "rgba(255,255,255,0.4)",
-              }}
-            />
-          ))}
+        {/* Photo dots + camera context */}
+        <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2">
+          <div
+            className="text-[10px] px-2 py-1 rounded-full"
+            style={{ background: "rgba(0,0,0,0.6)", color: "#e8d5b7", backdropFilter: "blur(4px)" }}
+          >
+            {recipe.camera} · {recipe.filmSimulation} · {recipe.settings.iso}
+          </div>
+          <div className="flex gap-1.5">
+            {recipe.photos.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPhotoIdx(i)}
+                className="rounded-full transition-all"
+                style={{
+                  width: i === photoIdx ? 20 : 6,
+                  height: 6,
+                  background: i === photoIdx ? "#e8d5b7" : "rgba(255,255,255,0.4)",
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -150,9 +170,13 @@ function RecipeDetail({ id }: { id: string }) {
                 {recipe.saves.toLocaleString()}
               </span>
             </button>
-            <button className="flex flex-col items-center gap-0.5">
+            <Link
+              href={`/recipe/${recipe.id}/share`}
+              className="flex flex-col items-center gap-0.5"
+            >
               <Share2 size={22} color="#6b6b6b" />
-            </button>
+              <span className="text-[10px]" style={{ color: "#6b6b6b" }}>Frame</span>
+            </Link>
           </div>
         </div>
 
